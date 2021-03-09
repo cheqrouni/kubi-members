@@ -1,0 +1,92 @@
+dn: ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: Groups
+
+dn: ou=GLOBAL,ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: GLOBAL
+
+dn: ou=LOCAL,ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: LOCAL
+
+dn: cn=native,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: native
+sn: native
+mail: native@cagip.io
+userPassword: ilsdeveloppaient!
+
+dn: cn=DL_ADMIN_TEAM,ou=GLOBAL,ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: DL_ADMIN_TEAM
+member: cn=native,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+
+
+dn: cn=cmp-user-1,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: cmp-user-1
+sn: cmp-user-1
+mail: cmp-user-1@cagip.io
+userPassword: ildeveloppa!
+
+dn: cn=cmp-user-2,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: cmp-user-2
+sn: cmp-user-2
+mail: cmp-user-2@cagip.io
+userPassword: nousdeveloppons!
+
+
+dn: cn=DL_KUB_CMP-DEV_ADMIN,ou=LOCAL,ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: DL_KUB_CMP-DEV_ADMIN
+member: cn=cmp-user-1,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+member: cn=cmp-user-2,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+
+dn: cn=DL_KUB_CMP-INT_ADMIN,ou=LOCAL,ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: DL_KUB_CMP-INT_ADMIN
+member: cn=cmp-user-1,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+member: cn=cmp-user-2,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+
+dn: cn=DL_KUB_CMP-UAT_ADMIN,ou=LOCAL,ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: DL_KUB_CMP-UAT_ADMIN
+member: cn=cmp-user-1,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+member: cn=cmp-user-2,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+
+dn: cn=DL_KUB_CMP-PPRD_ADMIN,ou=LOCAL,ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: DL_KUB_CMP-PPRD_ADMIN
+member: cn=cmp-user-1,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+member: cn=cmp-user-2,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+
+dn: cn=DL_KUB_CMP-PRD_ADMIN,ou=LOCAL,ou=Groups,dc=kubi,dc=ca-gip,dc=github,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: DL_KUB_CMP-PRD_ADMIN
+member: cn=cmp-user-1,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
+member: cn=cmp-user-2,ou=People,dc=kubi,dc=ca-gip,dc=github,dc=com
