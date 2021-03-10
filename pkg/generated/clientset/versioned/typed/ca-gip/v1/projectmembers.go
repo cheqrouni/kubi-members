@@ -19,18 +19,18 @@ type ProjectMembersesGetter interface {
 	ProjectMemberses(namespace string) ProjectMembersInterface
 }
 
-// ProjectMembersInterface has methods to work with ProjectMembers resources.
+// ProjectMembersInterface has methods to work with ProjectMember resources.
 type ProjectMembersInterface interface {
-	Create(*v1.ProjectMembers) (*v1.ProjectMembers, error)
-	Update(*v1.ProjectMembers) (*v1.ProjectMembers, error)
-	UpdateStatus(*v1.ProjectMembers) (*v1.ProjectMembers, error)
+	Create(*v1.ProjectMember) (*v1.ProjectMember, error)
+	Update(*v1.ProjectMember) (*v1.ProjectMember, error)
+	UpdateStatus(*v1.ProjectMember) (*v1.ProjectMember, error)
 	Delete(name string, options *metav1.DeleteOptions) error
 	DeleteCollection(options *metav1.DeleteOptions, listOptions metav1.ListOptions) error
-	Get(name string, options metav1.GetOptions) (*v1.ProjectMembers, error)
-	List(opts metav1.ListOptions) (*v1.ProjectMembersList, error)
+	Get(name string, options metav1.GetOptions) (*v1.ProjectMember, error)
+	List(opts metav1.ListOptions) (*v1.ProjectMemberList, error)
 	Watch(opts metav1.ListOptions) (watch.Interface, error)
-	Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.ProjectMembers, err error)
-	ProjectMembersExpansion
+	Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.ProjectMember, err error)
+	ProjectMemberExpansion
 }
 
 // projectMemberses implements ProjectMembersInterface
@@ -48,8 +48,8 @@ func newProjectMemberses(c *CagipV1Client, namespace string) *projectMemberses {
 }
 
 // Get takes name of the projectMembers, and returns the corresponding projectMembers object, and an error if there is any.
-func (c *projectMemberses) Get(name string, options metav1.GetOptions) (result *v1.ProjectMembers, err error) {
-	result = &v1.ProjectMembers{}
+func (c *projectMemberses) Get(name string, options metav1.GetOptions) (result *v1.ProjectMember, err error) {
+	result = &v1.ProjectMember{}
 	err = c.client.Get().
 		Namespace(c.ns).
 		Resource("projectmemberses").
@@ -61,12 +61,12 @@ func (c *projectMemberses) Get(name string, options metav1.GetOptions) (result *
 }
 
 // List takes label and field selectors, and returns the list of ProjectMemberses that match those selectors.
-func (c *projectMemberses) List(opts metav1.ListOptions) (result *v1.ProjectMembersList, err error) {
+func (c *projectMemberses) List(opts metav1.ListOptions) (result *v1.ProjectMemberList, err error) {
 	var timeout time.Duration
 	if opts.TimeoutSeconds != nil {
 		timeout = time.Duration(*opts.TimeoutSeconds) * time.Second
 	}
-	result = &v1.ProjectMembersList{}
+	result = &v1.ProjectMemberList{}
 	err = c.client.Get().
 		Namespace(c.ns).
 		Resource("projectmemberses").
@@ -93,8 +93,8 @@ func (c *projectMemberses) Watch(opts metav1.ListOptions) (watch.Interface, erro
 }
 
 // Create takes the representation of a projectMembers and creates it.  Returns the server's representation of the projectMembers, and an error, if there is any.
-func (c *projectMemberses) Create(projectMembers *v1.ProjectMembers) (result *v1.ProjectMembers, err error) {
-	result = &v1.ProjectMembers{}
+func (c *projectMemberses) Create(projectMembers *v1.ProjectMember) (result *v1.ProjectMember, err error) {
+	result = &v1.ProjectMember{}
 	err = c.client.Post().
 		Namespace(c.ns).
 		Resource("projectmemberses").
@@ -105,8 +105,8 @@ func (c *projectMemberses) Create(projectMembers *v1.ProjectMembers) (result *v1
 }
 
 // Update takes the representation of a projectMembers and updates it. Returns the server's representation of the projectMembers, and an error, if there is any.
-func (c *projectMemberses) Update(projectMembers *v1.ProjectMembers) (result *v1.ProjectMembers, err error) {
-	result = &v1.ProjectMembers{}
+func (c *projectMemberses) Update(projectMembers *v1.ProjectMember) (result *v1.ProjectMember, err error) {
+	result = &v1.ProjectMember{}
 	err = c.client.Put().
 		Namespace(c.ns).
 		Resource("projectmemberses").
@@ -120,8 +120,8 @@ func (c *projectMemberses) Update(projectMembers *v1.ProjectMembers) (result *v1
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
 
-func (c *projectMemberses) UpdateStatus(projectMembers *v1.ProjectMembers) (result *v1.ProjectMembers, err error) {
-	result = &v1.ProjectMembers{}
+func (c *projectMemberses) UpdateStatus(projectMembers *v1.ProjectMember) (result *v1.ProjectMember, err error) {
+	result = &v1.ProjectMember{}
 	err = c.client.Put().
 		Namespace(c.ns).
 		Resource("projectmemberses").
@@ -161,8 +161,8 @@ func (c *projectMemberses) DeleteCollection(options *metav1.DeleteOptions, listO
 }
 
 // Patch applies the patch and returns the patched projectMembers.
-func (c *projectMemberses) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.ProjectMembers, err error) {
-	result = &v1.ProjectMembers{}
+func (c *projectMemberses) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1.ProjectMember, err error) {
+	result = &v1.ProjectMember{}
 	err = c.client.Patch(pt).
 		Namespace(c.ns).
 		Resource("projectmemberses").

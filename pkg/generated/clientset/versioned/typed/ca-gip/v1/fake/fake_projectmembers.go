@@ -20,17 +20,17 @@ type FakeProjectMemberses struct {
 
 var projectmembersesResource = schema.GroupVersionResource{Group: "cagip.github.com", Version: "v1", Resource: "projectmemberses"}
 
-var projectmembersesKind = schema.GroupVersionKind{Group: "cagip.github.com", Version: "v1", Kind: "ProjectMembers"}
+var projectmembersesKind = schema.GroupVersionKind{Group: "cagip.github.com", Version: "v1", Kind: "ProjectMember"}
 
 // Get takes name of the projectMembers, and returns the corresponding projectMembers object, and an error if there is any.
-func (c *FakeProjectMemberses) Get(name string, options v1.GetOptions) (result *cagipv1.ProjectMembers, err error) {
+func (c *FakeProjectMemberses) Get(name string, options v1.GetOptions) (result *cagipv1.ProjectMember, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewGetAction(projectmembersesResource, c.ns, name), &cagipv1.ProjectMembers{})
+		Invokes(testing.NewGetAction(projectmembersesResource, c.ns, name), &cagipv1.ProjectMember{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cagipv1.ProjectMembers), err
+	return obj.(*cagipv1.ProjectMember), err
 }
 
 // List takes label and field selectors, and returns the list of ProjectMemberses that match those selectors.
@@ -63,43 +63,43 @@ func (c *FakeProjectMemberses) Watch(opts v1.ListOptions) (watch.Interface, erro
 }
 
 // Create takes the representation of a projectMembers and creates it.  Returns the server's representation of the projectMembers, and an error, if there is any.
-func (c *FakeProjectMemberses) Create(projectMembers *cagipv1.ProjectMembers) (result *cagipv1.ProjectMembers, err error) {
+func (c *FakeProjectMemberses) Create(projectMembers *cagipv1.ProjectMember) (result *cagipv1.ProjectMember, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewCreateAction(projectmembersesResource, c.ns, projectMembers), &cagipv1.ProjectMembers{})
+		Invokes(testing.NewCreateAction(projectmembersesResource, c.ns, projectMembers), &cagipv1.ProjectMember{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cagipv1.ProjectMembers), err
+	return obj.(*cagipv1.ProjectMember), err
 }
 
 // Update takes the representation of a projectMembers and updates it. Returns the server's representation of the projectMembers, and an error, if there is any.
-func (c *FakeProjectMemberses) Update(projectMembers *cagipv1.ProjectMembers) (result *cagipv1.ProjectMembers, err error) {
+func (c *FakeProjectMemberses) Update(projectMembers *cagipv1.ProjectMember) (result *cagipv1.ProjectMember, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateAction(projectmembersesResource, c.ns, projectMembers), &cagipv1.ProjectMembers{})
+		Invokes(testing.NewUpdateAction(projectmembersesResource, c.ns, projectMembers), &cagipv1.ProjectMember{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cagipv1.ProjectMembers), err
+	return obj.(*cagipv1.ProjectMember), err
 }
 
 // UpdateStatus was generated because the type contains a Status member.
 // Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
-func (c *FakeProjectMemberses) UpdateStatus(projectMembers *cagipv1.ProjectMembers) (*cagipv1.ProjectMembers, error) {
+func (c *FakeProjectMemberses) UpdateStatus(projectMembers *cagipv1.ProjectMember) (*cagipv1.ProjectMember, error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewUpdateSubresourceAction(projectmembersesResource, "status", c.ns, projectMembers), &cagipv1.ProjectMembers{})
+		Invokes(testing.NewUpdateSubresourceAction(projectmembersesResource, "status", c.ns, projectMembers), &cagipv1.ProjectMember{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cagipv1.ProjectMembers), err
+	return obj.(*cagipv1.ProjectMember), err
 }
 
 // Delete takes name of the projectMembers and deletes it. Returns an error if one occurs.
 func (c *FakeProjectMemberses) Delete(name string, options *v1.DeleteOptions) error {
 	_, err := c.Fake.
-		Invokes(testing.NewDeleteAction(projectmembersesResource, c.ns, name), &cagipv1.ProjectMembers{})
+		Invokes(testing.NewDeleteAction(projectmembersesResource, c.ns, name), &cagipv1.ProjectMember{})
 
 	return err
 }
@@ -113,12 +113,12 @@ func (c *FakeProjectMemberses) DeleteCollection(options *v1.DeleteOptions, listO
 }
 
 // Patch applies the patch and returns the patched projectMembers.
-func (c *FakeProjectMemberses) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *cagipv1.ProjectMembers, err error) {
+func (c *FakeProjectMemberses) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *cagipv1.ProjectMember, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(projectmembersesResource, c.ns, name, pt, data, subresources...), &cagipv1.ProjectMembers{})
+		Invokes(testing.NewPatchSubresourceAction(projectmembersesResource, c.ns, name, pt, data, subresources...), &cagipv1.ProjectMember{})
 
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*cagipv1.ProjectMembers), err
+	return obj.(*cagipv1.ProjectMember), err
 }

@@ -2,4 +2,4 @@
 
 package v1
 
-type ProjectMembersExpansion interface{}
+type ProjectMemberExpansion interface{}

@@ -10,7 +10,7 @@ import (
 
 type CagipV1Interface interface {
 	RESTClient() rest.Interface
-	ProjectMembersesGetter
+	ProjectMembersGetter
 }
 
 // CagipV1Client is used to interact with features provided by the cagip.github.com group.
@@ -18,8 +18,8 @@ type CagipV1Client struct {
 	restClient rest.Interface
 }
 
-func (c *CagipV1Client) ProjectMemberses(namespace string) ProjectMembersInterface {
-	return newProjectMemberses(c, namespace)
+func (c *CagipV1Client) ProjectMembers(namespace string) ProjectMemberInterface {
+	return newProjectMembers(c, namespace)
 }
 
 // NewForConfig creates a new CagipV1Client for the given config.

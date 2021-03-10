@@ -8,8 +8,8 @@ import (
 
 // Interface provides access to all the informers in this group version.
 type Interface interface {
-	// ProjectMemberses returns a ProjectMembersInformer.
-	ProjectMemberses() ProjectMembersInformer
+	// ProjectMembers returns a ProjectMemberInformer.
+	ProjectMembers() ProjectMemberInformer
 }
 
 type version struct {
@@ -23,7 +23,7 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 	return &version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}
 }
 
-// ProjectMemberses returns a ProjectMembersInformer.
-func (v *version) ProjectMemberses() ProjectMembersInformer {
-	return &projectMembersInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+// ProjectMembers returns a ProjectMemberInformer.
+func (v *version) ProjectMembers() ProjectMemberInformer {
+	return &projectMemberInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

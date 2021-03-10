@@ -12,7 +12,7 @@ import (
 // ProjectMembersLister helps list ProjectMemberses.
 type ProjectMembersLister interface {
 	// List lists all ProjectMemberses in the indexer.
-	List(selector labels.Selector) (ret []*v1.ProjectMembers, err error)
+	List(selector labels.Selector) (ret []*v1.ProjectMember, err error)
 	// ProjectMemberses returns an object that can list and get ProjectMemberses.
 	ProjectMemberses(namespace string) ProjectMembersNamespaceLister
 	ProjectMembersListerExpansion
@@ -29,9 +29,9 @@ func NewProjectMembersLister(indexer cache.Indexer) ProjectMembersLister {
 }
 
 // List lists all ProjectMemberses in the indexer.
-func (s *projectMembersLister) List(selector labels.Selector) (ret []*v1.ProjectMembers, err error) {
+func (s *projectMembersLister) List(selector labels.Selector) (ret []*v1.ProjectMember, err error) {
 	err = cache.ListAll(s.indexer, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1.ProjectMembers))
+		ret = append(ret, m.(*v1.ProjectMember))
 	})
 	return ret, err
 }
@@ -44,9 +44,9 @@ func (s *projectMembersLister) ProjectMemberses(namespace string) ProjectMembers
 // ProjectMembersNamespaceLister helps list and get ProjectMemberses.
 type ProjectMembersNamespaceLister interface {
 	// List lists all ProjectMemberses in the indexer for a given namespace.
-	List(selector labels.Selector) (ret []*v1.ProjectMembers, err error)
-	// Get retrieves the ProjectMembers from the indexer for a given namespace and name.
-	Get(name string) (*v1.ProjectMembers, error)
+	List(selector labels.Selector) (ret []*v1.ProjectMember, err error)
+	// Get retrieves the ProjectMember from the indexer for a given namespace and name.
+	Get(name string) (*v1.ProjectMember, error)
 	ProjectMembersNamespaceListerExpansion
 }
 
@@ -58,15 +58,15 @@ type projectMembersNamespaceLister struct {
 }
 
 // List lists all ProjectMemberses in the indexer for a given namespace.
-func (s projectMembersNamespaceLister) List(selector labels.Selector) (ret []*v1.ProjectMembers, err error) {
+func (s projectMembersNamespaceLister) List(selector labels.Selector) (ret []*v1.ProjectMember, err error) {
 	err = cache.ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
-		ret = append(ret, m.(*v1.ProjectMembers))
+		ret = append(ret, m.(*v1.ProjectMember))
 	})
 	return ret, err
 }
 
-// Get retrieves the ProjectMembers from the indexer for a given namespace and name.
-func (s projectMembersNamespaceLister) Get(name string) (*v1.ProjectMembers, error) {
+// Get retrieves the ProjectMember from the indexer for a given namespace and name.
+func (s projectMembersNamespaceLister) Get(name string) (*v1.ProjectMember, error) {
 	obj, exists, err := s.indexer.GetByKey(s.namespace + "/" + name)
 	if err != nil {
 		return nil, err
@@ -74,5 +74,5 @@ func (s projectMembersNamespaceLister) Get(name string) (*v1.ProjectMembers, err
 	if !exists {
 		return nil, errors.NewNotFound(v1.Resource("projectmembers"), name)
 	}
-	return obj.(*v1.ProjectMembers), nil
+	return obj.(*v1.ProjectMember), nil
 }

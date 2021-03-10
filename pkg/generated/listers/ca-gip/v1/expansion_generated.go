@@ -2,10 +2,10 @@
 
 package v1
 
-// ProjectMembersListerExpansion allows custom methods to be added to
-// ProjectMembersLister.
-type ProjectMembersListerExpansion interface{}
+// ProjectMemberListerExpansion allows custom methods to be added to
+// ProjectMemberLister.
+type ProjectMemberListerExpansion interface{}
 
-// ProjectMembersNamespaceListerExpansion allows custom methods to be added to
-// ProjectMembersNamespaceLister.
-type ProjectMembersNamespaceListerExpansion interface{}
+// ProjectMemberNamespaceListerExpansion allows custom methods to be added to
+// ProjectMemberNamespaceLister.
+type ProjectMemberNamespaceListerExpansion interface{}

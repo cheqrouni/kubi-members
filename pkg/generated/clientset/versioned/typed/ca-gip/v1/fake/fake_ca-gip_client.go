@@ -12,8 +12,8 @@ type FakeCagipV1 struct {
 	*testing.Fake
 }
 
-func (c *FakeCagipV1) ProjectMemberses(namespace string) v1.ProjectMembersInterface {
-	return &FakeProjectMemberses{c, namespace}
+func (c *FakeCagipV1) ProjectMembers(namespace string) v1.ProjectMemberInterface {
+	return &FakeProjectMembers{c, namespace}
 }
 
 // RESTClient returns a RESTClient that is used to communicate
