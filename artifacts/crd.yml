@@ -63,7 +63,7 @@ spec:
     kind: ClusterMember
     shortNames:
       - clumem
-  scope: cluster-scoped
+  scope: Cluster
   validation:
     openAPIV3Schema:
       type: object
