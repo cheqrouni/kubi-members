@@ -78,7 +78,7 @@ spec:
           type: string
         mail:
           type: string
-        roles:
+        role:
           enum:
           - "ClusterOps"
           - "Admin"
