@@ -44,20 +44,20 @@ func (c *Controller) Run() (err error) {
 
 	for _, project := range projects.Items {
 		if project.Status.Name == kubiv1.ProjectStatusCreated {
-			c.SyncMembers(&project)
+			c.SyncProjectMembers(&project)
 		}
 	}
 
 	return
 }
 
-func (c *Controller) SyncMembers(project *kubiv1.Project) {
+func (c *Controller) SyncProjectMembers(project *kubiv1.Project) {
 	members, err := c.ldap.Search(project.Spec.SourceDN)
 	if err != nil {
 		klog.Errorf("Could not find ldap members for %s : %s", project.Spec.SourceDN, err)
 	}
 	projectMembers := c.templateProjectMembers(project, members)
-	c.updateMembers(project.Name, projectMembers)
+	c.createProjectMembers(project.Name, projectMembers)
 
 	savedMembers, err := c.membersclientset.CagipV1().ProjectMembers(project.Name).List(metav1.ListOptions{})
 	if err != nil {
@@ -106,21 +106,10 @@ func (c *Controller) updateClusterMembers(members ldap.Users, role string) {
 	for _, member := range members {
 		user, err := c.membersclientset.CagipV1().ClusterMembers().Get(member.Username, metav1.GetOptions{})
 		if errors.IsNotFound(err) {
-			_, errcreate := c.membersclientset.CagipV1().ClusterMembers().Create(&v1.ClusterMember{
-				TypeMeta: metav1.TypeMeta{},
-				ObjectMeta: metav1.ObjectMeta{
-					Name: member.Username,
-				},
-				Dn:       member.Dn,
-				Username: member.Username,
-				Mail:     member.Mail,
-				Roles:    role,
-			})
+			_, errcreate := c.membersclientset.CagipV1().ClusterMembers().Create(c.templateClusterMember(member, role))
 			if errcreate != nil {
-				klog.Errorf("Could not create cluster member %s : %s", member.Username, errcreate)
+				klog.Errorf("Could not create cluster member %s : %s", member.Username, err)
 			}
-		} else if err != nil {
-			klog.Errorf("Error attempting to browse member %s : %s", member.Username, err)
 		}
 		_, err = c.membersclientset.CagipV1().ClusterMembers().Update(user)
 		if err != nil {
@@ -129,7 +118,20 @@ func (c *Controller) updateClusterMembers(members ldap.Users, role string) {
 	}
 }
 
-func (c *Controller) updateMembers(namespace string, members []*v1.ProjectMember) {
+func (c *Controller) templateClusterMember(member ldap.User, role string) *v1.ClusterMember {
+	return &v1.ClusterMember{
+		TypeMeta: metav1.TypeMeta{},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: member.Username,
+		},
+		Dn:       member.Dn,
+		Username: member.Username,
+		Mail:     member.Mail,
+		Roles:    role,
+	}
+}
+
+func (c *Controller) createProjectMembers(namespace string, members []*v1.ProjectMember) {
 	for _, member := range members {
 		_, err := c.membersclientset.CagipV1().ProjectMembers(namespace).Get(member.Username, metav1.GetOptions{})
 		if errors.IsNotFound(err) {
