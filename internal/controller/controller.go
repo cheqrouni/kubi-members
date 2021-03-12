@@ -127,7 +127,7 @@ func (c *Controller) templateClusterMember(member ldap.User, role string) *v1.Cl
 		Dn:       member.Dn,
 		Username: member.Username,
 		Mail:     member.Mail,
-		Roles:    role,
+		Role:     role,
 	}
 }
 
