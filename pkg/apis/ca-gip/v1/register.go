@@ -33,6 +33,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&ProjectMember{},
 		&ProjectMemberList{},
+		&ClusterMember{},
+		&ClusterMemberList{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil

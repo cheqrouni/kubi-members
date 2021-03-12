@@ -9,6 +9,10 @@ import (
 type LdapConfig struct {
 	UserBase            string
 	GroupBase           string
+	AppGroupBase        string
+	CustomerGroupBase   string
+	OpsGroupBase        string
+	AdminGroupBase      string
 	Host                string
 	Port                int
 	UseSSL              bool
@@ -58,6 +62,10 @@ func LoadConfig() LdapConfig {
 	ldapConfig := LdapConfig{
 		UserBase:            os.Getenv("LDAP_USERBASE"),
 		GroupBase:           os.Getenv("LDAP_GROUPBASE"),
+		AppGroupBase:        os.Getenv("LDAP_APP_GROUPBASE"),
+		CustomerGroupBase:   os.Getenv("LDAP_CUSTOMER_OPS_GROUPBASE"),
+		OpsGroupBase:        os.Getenv("LDAP_OPS_GROUPBASE"),
+		AdminGroupBase:      os.Getenv("LDAP_ADMINS_GROUPBASE"),
 		Host:                os.Getenv("LDAP_SERVER"),
 		Port:                ldapPort,
 		UseSSL:              useSSL,

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/ca-gip/kubi-members/internal/ldap"
+	"github.com/ca-gip/kubi-members/internal/utils"
 	v1 "github.com/ca-gip/kubi-members/pkg/apis/ca-gip/v1"
 	membersclientset "github.com/ca-gip/kubi-members/pkg/generated/clientset/versioned"
 	kubiv1 "github.com/ca-gip/kubi/pkg/apis/ca-gip/v1"
@@ -16,6 +17,7 @@ type Controller struct {
 	configmapclientset kubernetes.Interface
 	projectclientset   projectclientset.Interface
 	membersclientset   membersclientset.Interface
+
 	ldap               *ldap.Ldap
 }
 
@@ -38,11 +40,14 @@ func (c *Controller) Run() (err error) {
 		return err
 	}
 
+	c.SyncClusterMembers()
+
 	for _, project := range projects.Items {
 		if project.Status.Name == kubiv1.ProjectStatusCreated {
 			c.SyncMembers(&project)
 		}
 	}
+
 	return
 }
 
@@ -71,6 +76,61 @@ func (c *Controller) SyncMembers(project *kubiv1.Project) {
 
 }
 
+func (c *Controller) SyncClusterMembers() {
+	opsUsers, err := c.ldap.Search(c.ldap.OpsGroupBase)
+	if err != nil {
+		klog.Errorf("Could not ldap members for %s : %s", c.ldap.OpsGroupBase, err)
+	}
+	c.updateClusterMembers(opsUsers, utils.OpsRole)
+
+	appUsers, err := c.ldap.Search(c.ldap.AppGroupBase)
+	if err != nil {
+		klog.Errorf("Could not find appUsers %s with specified DN: %s", c.ldap.AppGroupBase, err)
+	}
+	c.updateClusterMembers(appUsers, utils.AppRole)
+
+	customerUsers, err := c.ldap.Search(c.ldap.CustomerGroupBase)
+	if err != nil {
+		klog.Errorf("Could not find CusteromerGroupBass %s with specified DN : %s", c.ldap.CustomerGroupBase, err)
+	}
+	c.updateClusterMembers(customerUsers, utils.CustomerRole)
+
+	adminsUsers, err := c.ldap.Search(c.ldap.AdminGroupBase)
+	if err != nil {
+		klog.Errorf("Could not ldap members for %s : %s", c.ldap.CustomerGroupBase, err)
+	}
+	c.updateClusterMembers(adminsUsers, utils.AdminRole)
+}
+
+func (c *Controller) updateClusterMembers(members ldap.Users, role string) {
+	for _, member := range members {
+		user, err := c.membersclientset.CagipV1().ClusterMembers().Get(member.Username, metav1.GetOptions{})
+		if errors.IsNotFound(err) {
+			_, errcreate := c.membersclientset.CagipV1().ClusterMembers().Create(&v1.ClusterMember{
+				TypeMeta:   metav1.TypeMeta{},
+				ObjectMeta: metav1.ObjectMeta{
+					Name: member.Username,
+				},
+				Dn:         member.Dn,
+				Username:   member.Username,
+				Mail:       member.Mail,
+				Roles:      []string{role},
+			})
+			if errcreate != nil {
+				klog.Errorf("Could not create cluster member %s : %s", member.Username, errcreate)
+			}
+		} else if err != nil {
+			klog.Errorf("Error attempting to browse member %s : %s", member.Username, err)
+		}
+		user.Roles = append(user.Roles, role)
+		_, err = c.membersclientset.CagipV1().ClusterMembers().Update(user)
+		if err != nil {
+			klog.Errorf("Could not update cluster member role %s: %s", member.Username, err)
+		}
+	}
+}
+
+
 func (c *Controller) updateMembers(namespace string, members []*v1.ProjectMember) {
 	for _, member := range members {
 		_, err := c.membersclientset.CagipV1().ProjectMembers(namespace).Get(member.Username, metav1.GetOptions{})
@@ -98,6 +158,8 @@ func (c *Controller) templateProjectMember(project *kubiv1.Project, user ldap.Us
 		Mail:     user.Mail,
 	}
 }
+
+
 
 func (c *Controller) templateProjectMembers(project *kubiv1.Project, users []ldap.User) (members []*v1.ProjectMember) {
 	for _, user := range users {

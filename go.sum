@@ -26,6 +26,8 @@ github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+Ce
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
 github.com/ca-gip/kubi v1.8.6 h1:CjdpEHFZrSo8+0oY1zXQe5Zu+IfE91TSeQKqR3p2fOw=
 github.com/ca-gip/kubi v1.8.6/go.mod h1:Sr5809eDYjxSFm8wMwPxzDNw9F5HzNN2+dzq5ZFH8XA=
+github.com/ca-gip/kubi v1.9.1 h1:9G19qUABmerofN8cigqOy2bweUkFFKarGik26CpE828=
+github.com/ca-gip/kubi v1.9.1/go.mod h1:Sr5809eDYjxSFm8wMwPxzDNw9F5HzNN2+dzq5ZFH8XA=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7vjVVG0kc13fIWeqUViNPyEJxv/OmvnBo0Yme4=

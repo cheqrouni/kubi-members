@@ -2,4 +2,6 @@
 
 package v1
 
+type ClusterMemberExpansion interface{}
+
 type ProjectMemberExpansion interface{}

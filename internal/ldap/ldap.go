@@ -31,12 +31,15 @@ type Ldap struct {
 	UserBase   string
 	UserFilter string
 	GroupBase  string
+	AppGroupBase		string
+	AdminGroupBase		string
+	CustomerGroupBase	string
+	OpsGroupBase		string
 }
 
 func NewLdap() *Ldap {
 
 	config := utils.LoadConfig()
-
 	tlsConfig := &tls.Config{
 		ServerName:         config.Host,
 		InsecureSkipVerify: config.SkipTLSVerification,
@@ -74,7 +77,15 @@ func NewLdap() *Ldap {
 		syscall.Exit(1)
 	}
 
-	return &Ldap{Conn: conn, UserBase: config.UserBase, GroupBase: config.GroupBase}
+	return &Ldap{
+		Conn:              conn,
+		UserBase:          config.UserBase,
+		GroupBase:         config.GroupBase,
+		AppGroupBase:      config.AppGroupBase,
+		AdminGroupBase:    config.AdminGroupBase,
+		CustomerGroupBase: config.CustomerGroupBase,
+		OpsGroupBase:      config.OpsGroupBase,
+	}
 
 }
 

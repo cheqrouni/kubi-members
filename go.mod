@@ -12,7 +12,4 @@ require (
 	k8s.io/klog/v2 v2.4.0
 )
 
-replace (
-	k8s.io/code-generator => k8s.io/code-generator v0.0.0-20190612205613-18da4a14b22b
-	github.com/ca-gip/kubi => /Users/clementblaise/go/src/github.com/ca-gip/kubi
-)
+replace k8s.io/code-generator => k8s.io/code-generator v0.0.0-20190612205613-18da4a14b22b

@@ -2,6 +2,10 @@
 
 package v1
 
+// ClusterMemberListerExpansion allows custom methods to be added to
+// ClusterMemberLister.
+type ClusterMemberListerExpansion interface{}
+
 // ProjectMemberListerExpansion allows custom methods to be added to
 // ProjectMemberLister.
 type ProjectMemberListerExpansion interface{}
