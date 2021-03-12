@@ -29,10 +29,10 @@ type ClusterMember struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Dn       string 	`json:"dn,omitempty"`
-	Username string 	`json:"username,omitempty"`
-	Mail     string		`json:"mail,omitempty"`
-	Roles    []string	`json:"roles,omitempty"`
+	Dn       string `json:"dn,omitempty"`
+	Username string `json:"username,omitempty"`
+	Mail     string `json:"mail,omitempty"`
+	Roles    string `json:"roles,omitempty"`
 }
 
 // +genclient:nonNamespaced
@@ -41,5 +41,5 @@ type ClusterMemberList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 
-	Items        []ClusterMember `json:"items"`
+	Items []ClusterMember `json:"items"`
 }
