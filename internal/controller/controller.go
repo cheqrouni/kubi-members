@@ -7,7 +7,7 @@ import (
 	membersclientset "github.com/ca-gip/kubi-members/pkg/generated/clientset/versioned"
 	kubiv1 "github.com/ca-gip/kubi/pkg/apis/ca-gip/v1"
 	projectclientset "github.com/ca-gip/kubi/pkg/generated/clientset/versioned"
-	"k8s.io/apimachinery/pkg/api/errors"
+	errors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/klog/v2"
@@ -17,6 +17,8 @@ type Controller struct {
 	configmapclientset kubernetes.Interface
 	projectclientset   projectclientset.Interface
 	membersclientset   membersclientset.Interface
+	projectsMembers		map[string][]*v1.ProjectMember
+	clusterMembers     []*v1.ClusterMember
 
 	ldap *ldap.Ldap
 }
@@ -34,91 +36,124 @@ func (c *Controller) Preflight() {
 }
 
 func (c *Controller) Run() (err error) {
-	projects, err := c.projectclientset.CagipV1().Projects().List(metav1.ListOptions{})
+
+	c.clusterMembers = []*v1.ClusterMember{}
+	c.projectsMembers = make(map[string][]*v1.ProjectMember)
+
+	err = c.LocalSyncClusterMembers()
 	if err != nil {
-		klog.Errorf("Could list project : %s", err)
-		return err
+		klog.Fatalf("Could not local compute cluster members : %v", err)
+		return
+	}
+
+	err = c.LocalSyncProjectsMembers()
+	if err != nil {
+		klog.Fatalf("Could not local compute project members: %v", err)
+		return
 	}
 
 	c.SyncClusterMembers()
+	c.SyncProjectMembers()
 
-	for _, project := range projects.Items {
-		if project.Status.Name == kubiv1.ProjectStatusCreated {
-			c.SyncProjectMembers(&project)
-		}
-	}
+	klog.Infof("Update members job complete.")
 
 	return
 }
 
-func (c *Controller) SyncProjectMembers(project *kubiv1.Project) {
-	members, err := c.ldap.Search(project.Spec.SourceDN)
-	if err != nil {
-		klog.Errorf("Could not find ldap members for %s : %s", project.Spec.SourceDN, err)
-	}
-	projectMembers := c.templateProjectMembers(project, members)
-	c.createProjectMembers(project.Name, projectMembers)
+func (c *Controller) SyncClusterMembers() {
+	c.membersclientset.CagipV1().ClusterMembers().DeleteCollection(&metav1.DeleteOptions{},metav1.ListOptions{})
 
-	savedMembers, err := c.membersclientset.CagipV1().ProjectMembers(project.Name).List(metav1.ListOptions{})
-	if err != nil {
-		klog.Errorf("Could not list project members for %s : %s", project.Name, err)
-		return
-	}
-
-	for _, savedMember := range savedMembers.Items {
-		if !members.Exist(savedMember.Dn) {
-			err := c.membersclientset.CagipV1().ProjectMembers(project.Name).Delete(savedMember.Name, &metav1.DeleteOptions{})
-			if err != nil {
-				klog.Errorf("Could not delete project member %s : %s", savedMember.Name, err)
-			}
+	for _, member := range c.clusterMembers {
+		_, err := c.membersclientset.CagipV1().ClusterMembers().Create(member)
+		if err != nil {
+			klog.Errorf("Could not create cluster member %s", member.Username, err)
 		}
+	}
+}
+
+func (c *Controller) SyncProjectMembers() {
+	c.clearProjectsMembers()
+	for project, members := range c.projectsMembers {
+		c.createProjectMembers(project,members)
 	}
 
 }
 
-func (c *Controller) SyncClusterMembers() {
+
+func (c *Controller) LocalSyncProjectsMembers() error {
+	projects, err := c.projectclientset.CagipV1().Projects().List(metav1.ListOptions{})
+	if err != nil {
+		klog.Errorf("Could not list project : %s", err)
+		return err
+	}
+	for _, project := range projects.Items {
+		if project.Status.Name == kubiv1.ProjectStatusCreated {
+			members, err := c.ldap.Search(project.Spec.SourceDN)
+			if err != nil {
+				klog.Errorf("Could not find ldap members for %s : %s", project.Spec.SourceDN, err)
+			}
+			c.projectsMembers[project.Name] = c.templateProjectMembers(&project, members)
+		}
+	}
+	return nil
+}
+
+
+func (c *Controller) LocalSyncClusterMembers() error {
+
 	opsUsers, err := c.ldap.Search(c.ldap.OpsGroupBase)
 	if err != nil {
 		klog.Errorf("Could not find ldap members for %s : %s", c.ldap.OpsGroupBase, err)
 	}
-	c.updateClusterMembers(opsUsers, utils.OpsRole)
+	c.synchronizeClusterMembersByRole(opsUsers, utils.OpsRole)
 
 	appUsers, err := c.ldap.Search(c.ldap.AppGroupBase)
 	if err != nil {
 		klog.Errorf("Could not find ldap members for %s : %s", c.ldap.AppGroupBase, err)
 	}
-	c.updateClusterMembers(appUsers, utils.AppRole)
+	c.synchronizeClusterMembersByRole(appUsers, utils.AppRole)
 
 	customerUsers, err := c.ldap.Search(c.ldap.CustomerGroupBase)
 	if err != nil {
 		klog.Errorf("Could not find ldap members for %s : %s", c.ldap.CustomerGroupBase, err)
 	}
-	c.updateClusterMembers(customerUsers, utils.CustomerRole)
+	c.synchronizeClusterMembersByRole(customerUsers, utils.CustomerRole)
 
 	adminsUsers, err := c.ldap.Search(c.ldap.AdminGroupBase)
 	if err != nil {
 		klog.Errorf("Could not find ldap members for %s : %s", c.ldap.CustomerGroupBase, err)
 	}
-	c.updateClusterMembers(adminsUsers, utils.AdminRole)
+	c.synchronizeClusterMembersByRole(adminsUsers, utils.AdminRole)
+
+	return nil
 }
 
-func (c *Controller) updateClusterMembers(members ldap.Users, role string) {
-	for _, member := range members {
-		user, err := c.membersclientset.CagipV1().ClusterMembers().Get(member.Username, metav1.GetOptions{})
-		if errors.IsNotFound(err) {
-			_, errcreate := c.membersclientset.CagipV1().ClusterMembers().Create(c.templateClusterMember(member, role))
-			if errcreate != nil {
-				klog.Errorf("Could not create cluster member %s : %s", member.Username, err)
-			}
+
+
+func (c *Controller) indexOfClusterMember(user ldap.User) int {
+	for i := 0; i < len(c.clusterMembers); i++ {
+		if c.clusterMembers[i].Mail == user.Mail {
+			return i
 		}
-		_, err = c.membersclientset.CagipV1().ClusterMembers().Update(user)
-		if err != nil {
-			klog.Errorf("Could not update cluster member role %s: %s", member.Username, err)
+	}
+	return -1
+}
+
+func (c *Controller) synchronizeClusterMembersByRole(members ldap.Users, role utils.ClusterRole) {
+	for _, member := range members {
+		userIndex := c.indexOfClusterMember(member)
+		if userIndex == -1 {
+			c.clusterMembers = append(c.clusterMembers, c.templateClusterMember(member, role))
+		} else {
+			_, userRole := utils.GetClusterRole(c.clusterMembers[userIndex].Role)
+			if userRole > role {
+				c.clusterMembers[userIndex].Role = role.String()
+			}
 		}
 	}
 }
 
-func (c *Controller) templateClusterMember(member ldap.User, role string) *v1.ClusterMember {
+func (c *Controller) templateClusterMember(member ldap.User, role utils.ClusterRole) *v1.ClusterMember {
 	return &v1.ClusterMember{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
@@ -127,7 +162,7 @@ func (c *Controller) templateClusterMember(member ldap.User, role string) *v1.Cl
 		Dn:       member.Dn,
 		Username: member.Username,
 		Mail:     member.Mail,
-		Role:     role,
+		Role:     role.String(),
 	}
 }
 
@@ -165,4 +200,17 @@ func (c *Controller) templateProjectMembers(project *kubiv1.Project, users []lda
 		members = append(members, member)
 	}
 	return
+}
+
+func (c *Controller) clearProjectsMembers() {
+	projects, err := c.projectclientset.CagipV1().Projects().List(metav1.ListOptions{})
+	if err != nil {
+		klog.Errorf("Could not list projects")
+	}
+	for _, project := range projects.Items {
+		err = c.membersclientset.CagipV1().ProjectMembers(project.Name).DeleteCollection(&metav1.DeleteOptions{}, metav1.ListOptions{})
+		if err != nil {
+			klog.Errorf("Could not remove members from project %s: %v", project.Name, err)
+		}
+	}
 }

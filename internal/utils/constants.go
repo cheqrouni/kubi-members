@@ -5,8 +5,20 @@ const (
 
 	CouldNotList = "Could not list resources %s"
 
-	OpsRole = "ClusterOps"
-	AdminRole = "Admin"
-	CustomerRole = "CustomerOps"
-	AppRole		= "AppOps"
+
 )
+
+type ClusterRole int
+
+const (
+	CustomerRole 	  ClusterRole	= iota
+	AppRole
+	OpsRole
+	AdminRole
+)
+
+func (c ClusterRole) String() string{
+	return  [...]string{"ClusterOps","Admin","CustomerOps", "AppOps"}[c]
+}
+
+

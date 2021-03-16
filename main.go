@@ -52,6 +52,8 @@ func main() {
 		klog.Fatalf("Error building kubernetes membersClient: %s", err.Error())
 	}
 
+	klog.Info("Creating LDAP client")
+
 	ldapClient := ldap.NewLdap()
 
 	controller := controller.NewController(configMapClient, projectClient, membersClient, ldapClient)

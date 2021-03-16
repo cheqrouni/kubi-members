@@ -40,6 +40,13 @@ type Ldap struct {
 func NewLdap() *Ldap {
 
 	config := utils.LoadConfig()
+	klog.InfoS("Creating LDAP Client with specified config",
+		"UserBase", config.UserBase,
+		"UserFilter", config.UserFilter,
+		"OpsGroupBase", config.OpsGroupBase,
+		"AppGroupBase", config.AppGroupBase,
+		"AdminGroupBase",config.AdminGroupBase,
+		"CustomerGroupBase", config.CustomerGroupBase)
 	tlsConfig := &tls.Config{
 		ServerName:         config.Host,
 		InsecureSkipVerify: config.SkipTLSVerification,

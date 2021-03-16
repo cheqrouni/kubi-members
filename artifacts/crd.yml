@@ -94,7 +94,7 @@ spec:
       type: string
       description: DN of the member
       JSONPath: .dn
-    - name: Roles
+    - name: Role
       type: string
-      description: List of member roles
-      JSONPath: .roles
+      description: Role of the member
+      JSONPath: .role

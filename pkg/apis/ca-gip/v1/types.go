@@ -32,7 +32,7 @@ type ClusterMember struct {
 	Dn       string `json:"dn,omitempty"`
 	Username string `json:"username,omitempty"`
 	Mail     string `json:"mail,omitempty"`
-	Role     string `json:"roles,omitempty"`
+	Role     string `json:"role,omitempty"`
 }
 
 // +genclient:nonNamespaced
