@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"k8s.io/klog/v2"
 	"os"
 )
@@ -22,4 +23,18 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func GetClusterRole(str string) (error, ClusterRole){
+	switch str {
+	case OpsRole.String():
+		return nil, OpsRole
+	case AdminRole.String():
+		return nil, AdminRole
+	case CustomerRole.String():
+		return nil, CustomerRole
+	case AppRole.String():
+		return nil, AppRole
+	}
+	return errors.New("unknown ClusterRole"), -1
 }

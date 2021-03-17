@@ -12,6 +12,10 @@ type FakeCagipV1 struct {
 	*testing.Fake
 }
 
+func (c *FakeCagipV1) ClusterMembers() v1.ClusterMemberInterface {
+	return &FakeClusterMembers{c}
+}
+
 func (c *FakeCagipV1) ProjectMembers(namespace string) v1.ProjectMemberInterface {
 	return &FakeProjectMembers{c, namespace}
 }

@@ -8,6 +8,8 @@ import (
 
 // Interface provides access to all the informers in this group version.
 type Interface interface {
+	// ClusterMembers returns a ClusterMemberInformer.
+	ClusterMembers() ClusterMemberInformer
 	// ProjectMembers returns a ProjectMemberInformer.
 	ProjectMembers() ProjectMemberInformer
 }
@@ -21,6 +23,11 @@ type version struct {
 // New returns a new Interface.
 func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakListOptions internalinterfaces.TweakListOptionsFunc) Interface {
 	return &version{factory: f, namespace: namespace, tweakListOptions: tweakListOptions}
+}
+
+// ClusterMembers returns a ClusterMemberInformer.
+func (v *version) ClusterMembers() ClusterMemberInformer {
+	return &clusterMemberInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }
 
 // ProjectMembers returns a ProjectMemberInformer.

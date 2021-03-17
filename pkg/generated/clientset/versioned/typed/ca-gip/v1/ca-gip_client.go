@@ -10,12 +10,17 @@ import (
 
 type CagipV1Interface interface {
 	RESTClient() rest.Interface
+	ClusterMembersGetter
 	ProjectMembersGetter
 }
 
 // CagipV1Client is used to interact with features provided by the cagip.github.com group.
 type CagipV1Client struct {
 	restClient rest.Interface
+}
+
+func (c *CagipV1Client) ClusterMembers() ClusterMemberInterface {
+	return newClusterMembers(c)
 }
 
 func (c *CagipV1Client) ProjectMembers(namespace string) ProjectMemberInterface {
