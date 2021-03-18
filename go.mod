@@ -6,8 +6,6 @@ require (
 	github.com/ca-gip/kubi v1.9.1
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/joho/godotenv v1.3.0
-	github.com/pkg/errors v0.9.1
-	google.golang.org/api v0.4.0
 	k8s.io/apimachinery v0.17.17
 	k8s.io/client-go v0.17.17
 	k8s.io/code-generator v0.20.4
