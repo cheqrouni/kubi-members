@@ -18,7 +18,7 @@ const (
 )
 
 func (c ClusterRole) String() string{
-	return  [...]string{"ClusterOps","Admin","CustomerOps", "AppOps"}[c]
+	return  [...]string{"CustomerOps", "AppOps", "ClusterOps", "Admin"}[c]
 }
 
 
