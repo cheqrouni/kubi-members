@@ -145,8 +145,9 @@ func (c *Controller) synchronizeClusterMembersByRole(members ldap.Users, role ut
 		if userIndex == -1 {
 			c.clusterMembers = append(c.clusterMembers, c.templateClusterMember(member, role))
 		} else {
+			// Change user Role only if current has less privileges
 			_, userRole := utils.GetClusterRole(c.clusterMembers[userIndex].Role)
-			if userRole > role {
+			if userRole < role {
 				c.clusterMembers[userIndex].Role = role.String()
 			}
 		}
