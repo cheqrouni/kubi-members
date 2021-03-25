@@ -158,7 +158,7 @@ func (c *Controller) templateClusterMember(member ldap.User, role utils.ClusterR
 	return &v1.ClusterMember{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: utils.ToDNSString(member.Mail),
+			Name: utils.ToDNSString(member.ID),
 		},
 		Dn:       member.Dn,
 		Username: member.Username,
@@ -183,7 +183,7 @@ func (c *Controller) createProjectMembers(namespace string, members []*v1.Projec
 func (c *Controller) templateProjectMember(project *kubiv1.Project, user ldap.User) *v1.ProjectMember {
 	return &v1.ProjectMember{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      utils.ToDNSString(user.Mail),
+			Name:      utils.ToDNSString(user.ID),
 			Namespace: project.Name,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(project, kubiv1.SchemeGroupVersion.WithKind("Project")),

@@ -10,6 +10,7 @@ import (
 )
 
 type User struct {
+	ID 		 string `ldap:"id"`
 	Dn       string `ldap:"dn"`
 	Username string `ldap:"displayName"`
 	Mail     string `ldap:"mail"`
@@ -27,14 +28,15 @@ func (u Users) Exist(dn string) bool {
 }
 
 type Ldap struct {
-	Conn       *ldap.Conn
-	UserBase   string
-	UserFilter string
-	GroupBase  string
-	AppGroupBase		string
-	AdminGroupBase		string
-	CustomerGroupBase	string
-	OpsGroupBase		string
+	Conn              *ldap.Conn
+	UserBase          string
+	UserFilter        string
+	UserKey           string
+	GroupBase         string
+	AppGroupBase      string
+	AdminGroupBase    string
+	CustomerGroupBase string
+	OpsGroupBase      string
 }
 
 func NewLdap() *Ldap {
@@ -46,7 +48,8 @@ func NewLdap() *Ldap {
 		"OpsGroupBase", config.OpsGroupBase,
 		"AppGroupBase", config.AppGroupBase,
 		"AdminGroupBase",config.AdminGroupBase,
-		"CustomerGroupBase", config.CustomerGroupBase)
+		"CustomerGroupBase", config.CustomerGroupBase,
+		"UserKey", config.UserKey)
 	tlsConfig := &tls.Config{
 		ServerName:         config.Host,
 		InsecureSkipVerify: config.SkipTLSVerification,
@@ -87,6 +90,7 @@ func NewLdap() *Ldap {
 	return &Ldap{
 		Conn:              conn,
 		UserBase:          config.UserBase,
+		UserKey:           config.UserKey,
 		GroupBase:         config.GroupBase,
 		AppGroupBase:      config.AppGroupBase,
 		AdminGroupBase:    config.AdminGroupBase,
@@ -117,7 +121,7 @@ func (l *Ldap) searchGroupMember(groupDN string) (members []string, err error) {
 	return
 }
 
-func (l *Ldap) searchUser(userDN string, usernameAttr string, mailAttr string) (user *User, err error) {
+func (l *Ldap) searchUser(userDN string) (user *User, err error) {
 	res, err := l.Conn.Search(&ldap.SearchRequest{
 		BaseDN:       userDN,
 		Scope:        ldap.ScopeWholeSubtree,
@@ -126,7 +130,7 @@ func (l *Ldap) searchUser(userDN string, usernameAttr string, mailAttr string) (
 		TimeLimit:    10,
 		TypesOnly:    false,
 		Filter:       "(|(objectClass=person)(objectClass=organizationalPerson))",
-		Attributes:   []string{usernameAttr, mailAttr},
+		Attributes:   []string{"cn","mail",l.UserKey},
 	})
 
 	if err != nil || res == nil || len(res.Entries) == 0 {
@@ -134,8 +138,9 @@ func (l *Ldap) searchUser(userDN string, usernameAttr string, mailAttr string) (
 	} else {
 		user = &User{
 			Dn:       userDN,
-			Username: res.Entries[0].GetAttributeValue(usernameAttr),
-			Mail:     res.Entries[0].GetAttributeValue(mailAttr),
+			Username: res.Entries[0].GetAttributeValue("cn"),
+			Mail:     res.Entries[0].GetAttributeValue("mail"),
+			ID:		  res.Entries[0].GetAttributeValue(l.UserKey),
 		}
 		return
 	}
@@ -148,7 +153,7 @@ func (l *Ldap) Search(groupDN string) (users Users, err error) {
 	}
 
 	for _, memberDn := range membersDn {
-		user, _ := l.searchUser(memberDn, "cn", "mail")
+		user, _ := l.searchUser(memberDn)
 		if user != nil {
 			users = append(users, *user)
 		}

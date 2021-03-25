@@ -21,6 +21,7 @@ type LdapConfig struct {
 	BindDN              string
 	BindPassword        string
 	UserFilter          string
+	UserKey             string
 	GroupFilter         string
 	Attributes          []string
 }
@@ -61,6 +62,7 @@ func LoadConfig() LdapConfig {
 
 	ldapConfig := LdapConfig{
 		UserBase:            os.Getenv("LDAP_USERBASE"),
+		UserKey:             os.Getenv("LDAP_USERKEY"),
 		GroupBase:           os.Getenv("LDAP_GROUPBASE"),
 		AppGroupBase:        os.Getenv("LDAP_APP_GROUPBASE"),
 		CustomerGroupBase:   os.Getenv("LDAP_CUSTOMER_OPS_GROUPBASE"),
