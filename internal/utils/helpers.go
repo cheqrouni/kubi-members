@@ -4,7 +4,6 @@ import (
 	"errors"
 	"k8s.io/klog/v2"
 	"os"
-	"strings"
 )
 
 func Check(err error) {
@@ -24,10 +23,6 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
-}
-
-func ToDNSString(str string) string {
-	return strings.ToLower(strings.Replace(strings.Replace(str, "@","-at-", -1), "_","-", -1))
 }
 
 func GetClusterRole(str string) (error, ClusterRole){

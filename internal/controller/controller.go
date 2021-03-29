@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"crypto/md5"
+	"fmt"
 	"github.com/ca-gip/kubi-members/internal/ldap"
 	"github.com/ca-gip/kubi-members/internal/utils"
 	v1 "github.com/ca-gip/kubi-members/pkg/apis/ca-gip/v1"
@@ -158,8 +160,9 @@ func (c *Controller) templateClusterMember(member ldap.User, role utils.ClusterR
 	return &v1.ClusterMember{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: utils.ToDNSString(member.ID),
+			Name: fmt.Sprintf("%x", md5.Sum([]byte(member.ID))),
 		},
+		UID: 	  member.ID,
 		Dn:       member.Dn,
 		Username: member.Username,
 		Mail:     member.Mail,
@@ -183,12 +186,13 @@ func (c *Controller) createProjectMembers(namespace string, members []*v1.Projec
 func (c *Controller) templateProjectMember(project *kubiv1.Project, user ldap.User) *v1.ProjectMember {
 	return &v1.ProjectMember{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      utils.ToDNSString(user.ID),
+			Name: fmt.Sprintf("%x", md5.Sum([]byte(user.ID))),
 			Namespace: project.Name,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(project, kubiv1.SchemeGroupVersion.WithKind("Project")),
 			},
 		},
+		UID: 	  user.ID,
 		Dn:       user.Dn,
 		Username: user.Username,
 		Mail:     user.Mail,

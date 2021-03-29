@@ -10,6 +10,7 @@ type ProjectMember struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
+	UID					string `json:"uid,omitempty"`
 	Dn      			string `json:"dn,omitempty"`
 	Username 			string `json:"username,omitempty"`
 	Mail     			string `json:"mail,omitempty"`
@@ -29,6 +30,7 @@ type ClusterMember struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
+	UID					string `json:"uid,omitempty"`
 	Dn       			string `json:"dn,omitempty"`
 	Username 			string `json:"username,omitempty"`
 	Mail     			string `json:"mail,omitempty"`
