@@ -135,7 +135,7 @@ func (c *Controller) LocalSyncClusterMembers() error {
 	if c.ldap.AdminGroupBase != "" {
 		adminsUsers, err := c.ldap.Search(c.ldap.AdminGroupBase)
 		if err != nil {
-			klog.Errorf("Could not find ldap members for %s : %s", c.ldap.CustomerGroupBase, err)
+			klog.Errorf("Could not find ldap members for %s : %s", c.ldap.AdminGroupBase, err)
 		}
 		c.synchronizeClusterMembersByRole(adminsUsers, utils.AdminRole)
 	} else {
