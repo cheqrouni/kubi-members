@@ -102,30 +102,45 @@ func (c *Controller) LocalSyncProjectsMembers() error {
 
 
 func (c *Controller) LocalSyncClusterMembers() error {
-
-	opsUsers, err := c.ldap.Search(c.ldap.OpsGroupBase)
-	if err != nil {
-		klog.Errorf("Could not find ldap members for %s : %s", c.ldap.OpsGroupBase, err)
+	if c.ldap.OpsGroupBase != "" {
+		opsUsers, err := c.ldap.Search(c.ldap.OpsGroupBase)
+		if err != nil {
+			klog.Errorf("Could not find ldap members for %s : %s", c.ldap.OpsGroupBase, err)
+		}
+		c.synchronizeClusterMembersByRole(opsUsers, utils.OpsRole)
+	} else {
+		klog.Warningf("Ignored role %v has it was not specified in configuration", utils.OpsRole)
 	}
-	c.synchronizeClusterMembersByRole(opsUsers, utils.OpsRole)
 
-	appUsers, err := c.ldap.Search(c.ldap.AppGroupBase)
-	if err != nil {
-		klog.Errorf("Could not find ldap members for %s : %s", c.ldap.AppGroupBase, err)
+	if c.ldap.AppGroupBase != "" {
+		appUsers, err := c.ldap.Search(c.ldap.AppGroupBase)
+		if err != nil {
+			klog.Errorf("Could not find ldap members for %s : %s", c.ldap.AppGroupBase, err)
+		}
+		c.synchronizeClusterMembersByRole(appUsers, utils.AppRole)
+	} else {
+		klog.Warningf("Ignored role %v has it was not specified in configuration", utils.AppRole)
 	}
-	c.synchronizeClusterMembersByRole(appUsers, utils.AppRole)
 
-	customerUsers, err := c.ldap.Search(c.ldap.CustomerGroupBase)
-	if err != nil {
-		klog.Errorf("Could not find ldap members for %s : %s", c.ldap.CustomerGroupBase, err)
+	if c.ldap.CustomerGroupBase != "" {
+		customerUsers, err := c.ldap.Search(c.ldap.CustomerGroupBase)
+		if err != nil {
+			klog.Errorf("Could not find ldap members for %s : %s", c.ldap.CustomerGroupBase, err)
+		}
+		c.synchronizeClusterMembersByRole(customerUsers, utils.CustomerRole)
+	} else {
+		klog.Warningf("Ignored role %v has it was not specified in configuration", utils.CustomerRole)
 	}
-	c.synchronizeClusterMembersByRole(customerUsers, utils.CustomerRole)
 
-	adminsUsers, err := c.ldap.Search(c.ldap.AdminGroupBase)
-	if err != nil {
-		klog.Errorf("Could not find ldap members for %s : %s", c.ldap.CustomerGroupBase, err)
+	if c.ldap.AdminGroupBase != "" {
+		adminsUsers, err := c.ldap.Search(c.ldap.AdminGroupBase)
+		if err != nil {
+			klog.Errorf("Could not find ldap members for %s : %s", c.ldap.CustomerGroupBase, err)
+		}
+		c.synchronizeClusterMembersByRole(adminsUsers, utils.AdminRole)
+	} else {
+		klog.Warningf("Ignored role %v has it was not specified in configuration", utils.AdminRole)
 	}
-	c.synchronizeClusterMembersByRole(adminsUsers, utils.AdminRole)
 
 	return nil
 }
